@@ -1,6 +1,6 @@
-@TransportadorasApi_HostAddress = http://localhost:5089
+@TransportadorasApi_HostAddress = http://localhost:
 
-GET {{TransportadorasApi_HostAddress}}/weatherforecast/
+GET https://localhost:7128/api/Rota
 Accept: application/json
 
 ###

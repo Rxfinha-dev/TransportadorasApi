@@ -7,6 +7,7 @@ using TransportadorasApi.Model;
 namespace TransportadorasApi.Controllers
 {
     [Route("api/[controller]")]
+    [ApiController]
     public class RotaController : Controller
     {
         private readonly IRotaRepository _rotaRepository;
@@ -104,7 +105,7 @@ namespace TransportadorasApi.Controllers
                 return StatusCode(500, ModelState);
             }
 
-            return Ok("Atualizado com Sucesso");
+            return NoContent();
         }
         
 
