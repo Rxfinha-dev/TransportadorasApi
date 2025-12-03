@@ -131,7 +131,7 @@ namespace TransportadorasApi.Controllers
 
             var depositoMap = _mapper.Map<Deposito>(updatedDeposito);
 
-            if (!_depositoRepository.UpdateDeposito(depositoMap))
+            if (!_depositoRepository.UpdateDeposito(depositoId, depositoMap))
             {
                 ModelState.AddModelError("", "Algo deu errado ao Atualizar o depósito");
                 return StatusCode(500, ModelState);
