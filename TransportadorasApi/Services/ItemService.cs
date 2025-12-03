@@ -1,6 +1,58 @@
-﻿namespace TransportadorasApi.Services
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using TransportadorasApi.Interfaces.IService;
+using TransportadorasApi.Model;
+using TransportadorasApi.Repository;
+
+namespace TransportadorasApi.Services
 {
-    public class ItemService
+    public class ItemService : IItemService
     {
+        private readonly ItemRepository _itemRepository;
+        public ItemService(ItemRepository itemRepository)
+        {
+            itemRepository = _itemRepository;
+        }
+        public bool CreateItem(Item item)
+        {
+            if(!_itemRepository.ItemExists(item.Id))
+                return false;
+
+            return _itemRepository.CreateItem(item);                
+            
+        }
+
+        public bool DeleteItem(Item item)
+        {
+            return _itemRepository.DeleteItem(item); 
+        }
+
+        public Item GetItem(int id)
+        { 
+            return _itemRepository.GetItem(id);
+        }
+
+        public ICollection<Item> GetItens()
+        {
+            return _itemRepository.GetItens();
+        }
+
+        public ICollection<Pedido> GetPedidosByItem(int itemId)
+        {
+            return _itemRepository.GetPedidosByItem(itemId);
+        }
+
+        public bool ItemExists(int id)
+        {
+            return _itemRepository.ItemExists(id);
+        }
+  
+
+        public bool UpdateItem(Item item)
+        {
+            if (!_itemRepository.ItemExists(item.Id))
+                return false;
+
+            return _itemRepository.UpdateItem(item);
+        }
     }
 }
