@@ -7,7 +7,7 @@ namespace TransportadorasApi.Interface
         ICollection<Deposito> GetDepositos();
         Deposito GetDeposito(int id);
         Deposito GetDepositoByEndereco(int enderecoId);
-        Endereco getDepositoEndereco(int depositoId);
+        IQueryable<Endereco> getDepositoEndereco(int depositoId);
         bool DepositoExists(int id);
 
         bool UpdateDeposito(Deposito deposito);

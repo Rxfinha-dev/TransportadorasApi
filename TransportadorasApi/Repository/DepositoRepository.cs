@@ -1,4 +1,5 @@
-﻿using TransportadorasApi.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using TransportadorasApi.Data;
 using TransportadorasApi.Interface;
 using TransportadorasApi.Model;
 
@@ -14,7 +15,7 @@ namespace TransportadorasApi.Repository
 
         public bool CreateDeposito(Deposito deposito)
         {
-            _context.Add(deposito);
+           _context.Enderecos.Where
             return Save();
         }
 
@@ -31,21 +32,27 @@ namespace TransportadorasApi.Repository
 
         public Deposito GetDeposito(int id)
         {
-            return _context.Depositos.Where(d => d.Id == id).FirstOrDefault();
+            return _context.Depositos.Include(d=>d.Localizacao)
+                .Where(d => d.Id == id).FirstOrDefault();
         }
 
         public Deposito GetDepositoByEndereco(int enderecoId)
         {
-            return _context.Depositos.Where(d => d.Localizacao.Id == enderecoId).FirstOrDefault();
+            return _context.Depositos.Include(d => d.Localizacao)
+                    .Where(d => d.Localizacao.Id == enderecoId)
+                    .FirstOrDefault();
+        }      
+  
+
+        public IQueryable<Endereco> getDepositoEndereco(int depositoId)
+        {
+            return _context.Depositos.Where(d => d.Id == depositoId)
+               .Select(d => d.Localizacao);
         }
 
-        public Endereco getDepositoEndereco(int depositoId)
-        {
-            return _context.Depositos.Where(d=>d.Id == depositoId).Select(d=>d.Localizacao).FirstOrDefault();
-        }
         public ICollection<Deposito> GetDepositos()
         {
-            return _context.Depositos.OrderBy(d=>d.Id).ToList();
+            return _context.Depositos.Include(d=>d.Localizacao).OrderBy(d=>d.Id).ToList();
         }
 
         public bool Save()
