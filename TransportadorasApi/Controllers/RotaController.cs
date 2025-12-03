@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel;
-using TransportadorasApi.Interface;
+using TransportadorasApi.Interfaces.IRepository;
 using TransportadorasApi.Model;
 
 namespace TransportadorasApi.Controllers

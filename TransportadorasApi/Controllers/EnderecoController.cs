@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using TransportadorasApi.Interface;
+using TransportadorasApi.Interfaces.IRepository;
 using TransportadorasApi.Model;
 using TransportadorasApi.Repository;
 

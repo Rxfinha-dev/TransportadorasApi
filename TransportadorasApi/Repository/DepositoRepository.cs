@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TransportadorasApi.Data;
-using TransportadorasApi.Interface;
+using TransportadorasApi.Interfaces.IRepository;
 using TransportadorasApi.Model;
 
 namespace TransportadorasApi.Repository
@@ -86,15 +86,15 @@ namespace TransportadorasApi.Repository
 
         public bool UpdateDeposito(int depositoId, Deposito depositoAtualizado)
         {
-            // 1️⃣ Buscar o depósito existente
-            var depositoDb = _context.Depositos
+            
+            var deposito = _context.Depositos
                 .Include(d => d.Localizacao)
                 .FirstOrDefault(d => d.Id == depositoId);
 
-            if (depositoDb == null)
+            if (deposito == null)
                 return false;
 
-            // 2️⃣ Verificar se o endereço enviado já existe no banco
+            
             var enderecoExistente = _context.Enderecos.FirstOrDefault(e =>
                 e.Rua == depositoAtualizado.Localizacao.Rua &&
                 e.Bairro == depositoAtualizado.Localizacao.Bairro &&
@@ -107,12 +107,12 @@ namespace TransportadorasApi.Repository
 
             if (enderecoExistente != null)
             {
-                // 3️⃣ Se já existe → apenas usa a FK existente
+                
                 enderecoId = enderecoExistente.Id;
             }
             else
             {
-                // 4️⃣ Se não existe → criar um novo endereço
+                
                 var novoEndereco = new Endereco
                 {
                     Rua = depositoAtualizado.Localizacao.Rua,
@@ -128,14 +128,15 @@ namespace TransportadorasApi.Repository
                 enderecoId = novoEndereco.Id;
             }
 
-            // 5️⃣ Atualizar apenas o LocalizacaoId do depósito
-            depositoDb.Localizacao.Id = enderecoId;
+           
+            deposito.Localizacao.Id = enderecoId;
 
-            _context.Update(depositoDb);
+            _context.Update(deposito);
 
             return Save();
         }
 
+     
     }
 
 }

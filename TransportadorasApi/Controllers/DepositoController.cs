@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.Metrics;
-using TransportadorasApi.Interface;
+using TransportadorasApi.Interfaces.IRepository;
 using TransportadorasApi.Model;
 
 namespace TransportadorasApi.Controllers
@@ -131,7 +131,7 @@ namespace TransportadorasApi.Controllers
 
             var depositoMap = _mapper.Map<Deposito>(updatedDeposito);
 
-            if (!_depositoRepository.UpdateDeposito(depositoId, depositoMap))
+            if (!_depositoRepository.UpdateDeposito(depositoId,depositoMap))
             {
                 ModelState.AddModelError("", "Algo deu errado ao Atualizar o depósito");
                 return StatusCode(500, ModelState);

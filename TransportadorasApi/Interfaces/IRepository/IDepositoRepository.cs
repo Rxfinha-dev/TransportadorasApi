@@ -1,6 +1,6 @@
 ﻿using TransportadorasApi.Model;
 
-namespace TransportadorasApi.Interface
+namespace TransportadorasApi.Interfaces.IRepository
 {
     public interface IDepositoRepository
     {
@@ -10,7 +10,7 @@ namespace TransportadorasApi.Interface
         IQueryable<Endereco> getDepositoEndereco(int depositoId);
         bool DepositoExists(int id);
 
-        bool UpdateDeposito(int dpositoID,Deposito deposito);
+        bool UpdateDeposito(int dpositoId, Deposito deposito);
 
         bool DeleteDeposito(Deposito deposito);
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
 using TransportadorasApi.Model;
 
-namespace TransportadorasApi.Interface
+namespace TransportadorasApi.Interfaces.IRepository
 {
     public interface IEnderecoRepository
     {

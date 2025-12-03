@@ -1,6 +1,6 @@
 ﻿using TransportadorasApi.Model;
 
-namespace TransportadorasApi.Interface
+namespace TransportadorasApi.Interfaces.IRepository
 {
     public interface IRotaRepository
     {

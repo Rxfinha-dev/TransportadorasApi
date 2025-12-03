@@ -1,5 +1,5 @@
 ﻿using TransportadorasApi.Data;
-using TransportadorasApi.Interface;
+using TransportadorasApi.Interfaces.IRepository;
 using TransportadorasApi.Model;
 
 namespace TransportadorasApi.Repository
