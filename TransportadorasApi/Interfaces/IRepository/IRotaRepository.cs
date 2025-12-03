@@ -7,7 +7,7 @@ namespace TransportadorasApi.Interfaces.IRepository
         ICollection<Rota> GetRotas();
         Rota GetRota(int id);
 
-        Rota GetRota(string nome);
+     
         bool RotaExists(int rotaId);
 
         bool CreateRota(Rota rota);

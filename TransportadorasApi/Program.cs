@@ -3,6 +3,7 @@ using TransportadorasApi.Data;
 using TransportadorasApi.Interfaces.IRepository;
 using TransportadorasApi.Interfaces.IService;
 using TransportadorasApi.Repository;
+using TransportadorasApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IRotaRepository, RotaRepository>();
 builder.Services.AddScoped<IEnderecoRepository, EnderecoRepository>();
 builder.Services.AddScoped<IDepositoRepository, DepositoRepository>();
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IClienteService, ClienteService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

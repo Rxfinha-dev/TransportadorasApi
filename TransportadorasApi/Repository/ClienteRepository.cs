@@ -1,4 +1,5 @@
-﻿using TransportadorasApi.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using TransportadorasApi.Data;
 using TransportadorasApi.Interfaces.IRepository;
 using TransportadorasApi.Model;
 
@@ -16,6 +17,11 @@ namespace TransportadorasApi.Repository
             return _context.Clientes.Any(c=>c.Id == id);
         }
 
+        public bool ClienteExistsByCpf(string cpf)
+        {
+            return _context.Clientes.Any(c=>c.Cpf.ToUpper() == cpf.ToUpper());
+        }
+
         public bool CreateCliente(Cliente cliente)
         {
             _context.Add(cliente);
@@ -30,18 +36,18 @@ namespace TransportadorasApi.Repository
 
         public Cliente GetCliente(string cpf)
         {
-            return _context.Clientes.Where(c => c.Cpf == cpf).FirstOrDefault();
+            return _context.Clientes.Include(c => c.endereco).Where(c => c.Cpf == cpf).FirstOrDefault();
 
         }
 
         public Cliente GetCliente(int id)
         {
-            return _context.Clientes.Where(c=>c.Id == id).FirstOrDefault();
+            return _context.Clientes.Include(c=>c.endereco).Where(c=>c.Id == id).FirstOrDefault();
         }
 
         public ICollection<Cliente> GetClientes()
         {
-            return _context.Clientes.OrderBy(c => c.Id).ToList();
+            return _context.Clientes.Include(c=>c.endereco).OrderBy(c => c.Id).ToList();
         }
 
         public bool Save()
@@ -50,7 +56,7 @@ namespace TransportadorasApi.Repository
             return saved > 0 ? true : false;
         }
 
-        public bool UpdateCliente(Cliente cliente)
+        public bool UpdateCliente(int clienteId, Cliente cliente)
         {
            _context.Update(cliente);
             return Save();

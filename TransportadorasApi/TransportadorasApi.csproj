@@ -24,9 +24,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Dto\" />
-    <Folder Include="Helper\" />
-  </ItemGroup>
-
 </Project>

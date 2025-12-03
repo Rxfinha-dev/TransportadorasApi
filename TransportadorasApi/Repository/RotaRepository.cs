@@ -31,11 +31,6 @@ namespace TransportadorasApi.Repository
             return _context.Rotas.Where(r=>r.Id == id).FirstOrDefault();
         }
 
-        public Rota GetRota(string nome)
-        {
-            return _context.Rotas.Where(r => r.Nome == nome).FirstOrDefault();
-        }
-
         public ICollection<Rota> GetRotas()
         {
             return _context.Rotas.OrderBy(r=>r.Id).ToList();

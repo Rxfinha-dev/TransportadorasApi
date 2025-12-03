@@ -10,10 +10,12 @@ namespace TransportadorasApi.Interfaces.IRepository
         Cliente GetCliente(int id);
 
         bool CreateCliente(Cliente cliente);
-        bool UpdateCliente(Cliente cliente);
+        bool UpdateCliente(int clienteId, Cliente cliente);
         bool DeleteCliente(Cliente cliente);
 
         bool ClienteExists(int id);
+
+        bool ClienteExistsByCpf(string cpf);
 
         bool Save();
     }

@@ -24,10 +24,11 @@ namespace TransportadorasApi.Repository
                 e.Numero == deposito.Localizacao.Numero
             );
 
-            if ( enderecoExistente == null)
+            if (enderecoExistente == null)
             {
                 _context.Add(deposito);
-            }else
+            }
+            else
             {
                 int enderecoId = enderecoExistente.Id;
 
@@ -39,7 +40,7 @@ namespace TransportadorasApi.Repository
 
                 _context.Add(deposito);
             }
-                return Save();
+            return Save();
         }
 
         public bool DeleteDeposito(Deposito deposito)
@@ -50,12 +51,12 @@ namespace TransportadorasApi.Repository
 
         public bool DepositoExists(int id)
         {
-            return _context.Depositos.Any(d=>d.Id == id);
+            return _context.Depositos.Any(d => d.Id == id);
         }
 
         public Deposito GetDeposito(int id)
         {
-            return _context.Depositos.Include(d=>d.Localizacao)
+            return _context.Depositos.Include(d => d.Localizacao)
                 .Where(d => d.Id == id).FirstOrDefault();
         }
 
@@ -64,8 +65,8 @@ namespace TransportadorasApi.Repository
             return _context.Depositos.Include(d => d.Localizacao)
                     .Where(d => d.Localizacao.Id == enderecoId)
                     .FirstOrDefault();
-        }      
-  
+        }
+
 
         public IQueryable<Endereco> getDepositoEndereco(int depositoId)
         {
@@ -75,7 +76,7 @@ namespace TransportadorasApi.Repository
 
         public ICollection<Deposito> GetDepositos()
         {
-            return _context.Depositos.Include(d=>d.Localizacao).OrderBy(d=>d.Id).ToList();
+            return _context.Depositos.Include(d => d.Localizacao).OrderBy(d => d.Id).ToList();
         }
 
         public bool Save()
@@ -84,59 +85,34 @@ namespace TransportadorasApi.Repository
             return saved > 0 ? true : false;
         }
 
-        public bool UpdateDeposito(int depositoId, Deposito depositoAtualizado)
+        public bool UpdateDeposito(Deposito deposito)
         {
-            
-            var deposito = _context.Depositos
-                .Include(d => d.Localizacao)
-                .FirstOrDefault(d => d.Id == depositoId);
+            var enderecoExistente = _context.Enderecos
+                        .FirstOrDefault(e =>
+                            e.Rua == deposito.Localizacao.Rua &&
+                            e.Bairro == deposito.Localizacao.Bairro &&
+                            e.Cidade == deposito.Localizacao.Cidade &&
+                            e.cep == deposito.Localizacao.cep &&
+                            e.Numero == deposito.Localizacao.Numero
+                        );
 
-            if (deposito == null)
-                return false;
-
-            
-            var enderecoExistente = _context.Enderecos.FirstOrDefault(e =>
-                e.Rua == depositoAtualizado.Localizacao.Rua &&
-                e.Bairro == depositoAtualizado.Localizacao.Bairro &&
-                e.Cidade == depositoAtualizado.Localizacao.Cidade &&
-                e.cep == depositoAtualizado.Localizacao.cep &&
-                e.Numero == depositoAtualizado.Localizacao.Numero
-            );
-
-            int enderecoId;
-
-            if (enderecoExistente != null)
+            if (enderecoExistente == null)
             {
-                
-                enderecoId = enderecoExistente.Id;
+                return false;
             }
             else
             {
-                
-                var novoEndereco = new Endereco
-                {
-                    Rua = depositoAtualizado.Localizacao.Rua,
-                    Bairro = depositoAtualizado.Localizacao.Bairro,
-                    Cidade = depositoAtualizado.Localizacao.Cidade,
-                    cep = depositoAtualizado.Localizacao.cep,
-                    Numero = depositoAtualizado.Localizacao.Numero
-                };
+                int enderecoId = enderecoExistente.Id;
 
-                _context.Enderecos.Add(novoEndereco);
-                _context.SaveChanges();
 
-                enderecoId = novoEndereco.Id;
+                deposito.Localizacao = enderecoExistente;
+
+                _context.Update(deposito);
             }
-
-           
-            deposito.Localizacao.Id = enderecoId;
-
-            _context.Update(deposito);
-
             return Save();
-        }
 
-     
+
+        }
     }
 
 }

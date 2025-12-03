@@ -131,11 +131,13 @@ namespace TransportadorasApi.Controllers
 
             var depositoMap = _mapper.Map<Deposito>(updatedDeposito);
 
-            if (!_depositoRepository.UpdateDeposito(depositoId,depositoMap))
+            if (!_depositoRepository.UpdateDeposito(depositoMap))
             {
                 ModelState.AddModelError("", "Algo deu errado ao Atualizar o depósito");
                 return StatusCode(500, ModelState);
             }
+            
+        
 
             return NoContent();
         }
@@ -158,7 +160,7 @@ namespace TransportadorasApi.Controllers
 
             if (!_depositoRepository.DeleteDeposito(depositoToDelete))
             {
-                ModelState.AddModelError("", "Something went wrong deleting category");
+                ModelState.AddModelError("", "Algo deu errado ao deletar o depósito");
             }
 
             return NoContent();

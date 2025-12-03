@@ -10,7 +10,7 @@ namespace TransportadorasApi.Interfaces.IRepository
         IQueryable<Endereco> getDepositoEndereco(int depositoId);
         bool DepositoExists(int id);
 
-        bool UpdateDeposito(int dpositoId, Deposito deposito);
+        bool UpdateDeposito(Deposito deposito);
 
         bool DeleteDeposito(Deposito deposito);
 
