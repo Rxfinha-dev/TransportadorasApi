@@ -41,9 +41,8 @@ namespace TransportadorasApi.Repository
 
         public Endereco getDepositoEndereco(int depositoId)
         {
-            return _context.Depositos.Where(d=>d.Id == depositoId).Select(d => d.Localizacao).FirstOrDefault();
+            return _context.Depositos.Where(d=>d.Id == depositoId).Select(d=>d.Localizacao).FirstOrDefault();
         }
-
         public ICollection<Deposito> GetDepositos()
         {
             return _context.Depositos.OrderBy(d=>d.Id).ToList();
