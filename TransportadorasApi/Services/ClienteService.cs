@@ -34,7 +34,8 @@ namespace TransportadorasApi.Services
                 e.Bairro == cliente.endereco.Bairro &&
                 e.Cidade == cliente.endereco.Cidade &&
                 e.cep == cliente.endereco.cep &&
-                e.Numero == cliente.endereco.Numero
+                e.Numero == cliente.endereco.Numero &&
+                e.Estado == cliente.endereco.Estado 
             );
 
             if (enderecoExistente == null)
@@ -93,7 +94,9 @@ namespace TransportadorasApi.Services
                 e.Bairro == clienteToUpdate.endereco.Bairro &&
                 e.Cidade == clienteToUpdate.endereco.Cidade &&
                 e.cep == clienteToUpdate.endereco.cep &&
-                e.Numero == clienteToUpdate.endereco.Numero
+                e.Numero == clienteToUpdate.endereco.Numero &&
+                e.Estado == cliente.endereco.Estado
+
             );
 
             if (enderecoExistente == null)

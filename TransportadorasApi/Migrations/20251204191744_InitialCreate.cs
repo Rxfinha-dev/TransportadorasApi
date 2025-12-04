@@ -5,7 +5,7 @@
 namespace TransportadorasApi.Migrations
 {
     /// <inheritdoc />
-    public partial class InitalCreate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,7 +20,8 @@ namespace TransportadorasApi.Migrations
                     Bairro = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Cidade = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Numero = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    cep = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    cep = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -106,6 +107,7 @@ namespace TransportadorasApi.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EnderecoOrigemId = table.Column<int>(type: "int", nullable: false),
                     EnderecoDestinoId = table.Column<int>(type: "int", nullable: false),
+                    valorTotal = table.Column<double>(type: "float", nullable: false),
                     RotaId = table.Column<int>(type: "int", nullable: false),
                     ClienteId = table.Column<int>(type: "int", nullable: false)
                 },

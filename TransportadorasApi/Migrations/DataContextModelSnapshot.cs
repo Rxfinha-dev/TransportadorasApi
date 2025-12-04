@@ -85,6 +85,10 @@ namespace TransportadorasApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Numero")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -145,6 +149,9 @@ namespace TransportadorasApi.Migrations
 
                     b.Property<int>("RotaId")
                         .HasColumnType("int");
+
+                    b.Property<double>("valorTotal")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

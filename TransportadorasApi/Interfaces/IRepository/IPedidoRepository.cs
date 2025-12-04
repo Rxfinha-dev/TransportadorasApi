@@ -6,12 +6,14 @@ namespace TransportadorasApi.Interfaces.IRepository
     {
         ICollection<Pedido> GetPedidos();
         Pedido GetPedido(int id);
-        ICollection<Item> GetItensByPedido(int pedidoId);
         bool PedidoExists(int id);
+
+        ICollection<Item> GetItensByPedido(int pedidoId);
+
         bool CreatePedido(Pedido pedido);
         bool UpdatePedido(Pedido pedido);
         bool DeletePedido(Pedido pedido);
-        bool Save();
 
+        bool Save();
     }
 }

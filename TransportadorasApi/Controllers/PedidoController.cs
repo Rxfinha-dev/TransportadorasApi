@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using TransportadorasApi.Dto;
-
 using TransportadorasApi.Interfaces.IService;
 using TransportadorasApi.Model;
 
@@ -14,29 +13,23 @@ namespace TransportadorasApi.Controllers
         private readonly IPedidoService _pedidoService;
         private readonly IMapper _mapper;
 
-        public PedidoController(IPedidoService pedidoService, IMapper mapper)
+        public PedidoController(IPedidoService service, IMapper mapper)
         {
-            _pedidoService = pedidoService;
+            _pedidoService = service;
             _mapper = mapper;
         }
 
-      
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Pedido>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<PedidoDto>))]
+        [ProducesResponseType(500)]
         public IActionResult GetPedidos()
         {
             var pedidos = _mapper.Map<List<PedidoDto>>(_pedidoService.GetPedidos());
-           
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             return Ok(pedidos);
         }
 
-      
         [HttpGet("{pedidoId}")]
-        [ProducesResponseType(200, Type = typeof(Pedido))]
+        [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public IActionResult GetPedido(int pedidoId)
         {
@@ -44,78 +37,57 @@ namespace TransportadorasApi.Controllers
                 return NotFound();
 
             var pedido = _mapper.Map<PedidoDto>(_pedidoService.GetPedido(pedidoId));
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             return Ok(pedido);
         }
-
-       
-        [HttpPost]
-        [ProducesResponseType(204)]
+        [HttpGet("itens/{pedidoId}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Item>))]
         [ProducesResponseType(400)]
-        public IActionResult CreatePedido([FromBody] PedidoDto pedidoCreate)
+        public IActionResult GetItensByPedido(int pedidoId)
         {
-            if (pedidoCreate == null)
+            if (!_pedidoService.PedidoExists(pedidoId))
+                return NotFound();
+
+            var itens = _mapper.Map<List<ItemDto>>(_pedidoService.GetItensByPedido(pedidoId));
+
+            if(!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            bool sucesso = _pedidoService.CreatePedido(
-                pedidoCreate.EnderecoOrigemId,
-                pedidoCreate.EnderecoDestinoId,
-                pedidoCreate.ClienteId,
-                pedidoCreate.RotaId,
-                pedidoCreate.ItensIds
-            );
-
-            if (!sucesso)
-            {
-                ModelState.AddModelError("", "Algo deu errado ao criar o pedido");
-                return StatusCode(500, ModelState);
-            }
-
-            return Ok("Pedido criado com sucesso");
+            return Ok(itens);
         }
 
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public IActionResult CreatePedido([FromBody] PedidoDto dto)
+        {
+            var pedido = _mapper.Map<Pedido>(dto);
+
+            if (!_pedidoService.CreatePedido(pedido, dto.ItensIds))
+                return StatusCode(500, "Erro ao criar");
+
+            return Ok("Criado com sucesso");
+        }
 
         [HttpPut("{pedidoId}")]
-        [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdatePedido(int pedidoId, [FromBody] PedidoDto updatedPedido)
+        public IActionResult UpdatePedido(int pedidoId, [FromBody] PedidoDto dto)
         {
-            if (updatedPedido == null)
-                return BadRequest(ModelState);
+            if (pedidoId != dto.Id)
+                return BadRequest();
 
             if (!_pedidoService.PedidoExists(pedidoId))
                 return NotFound();
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var pedido = _mapper.Map<Pedido>(dto);
 
-            var pedido = _pedidoService.GetPedido(pedidoId);
-            if (pedido == null)
-                return NotFound();
-
-            _mapper.Map(updatedPedido, pedido);
-
-            bool sucesso = _pedidoService.UpdatePedido(pedido, updatedPedido.ItensIds);
-
-            if (!sucesso)
-            {
-                ModelState.AddModelError("", "Algo deu errado ao atualizar o pedido");
-                return StatusCode(500, ModelState);
-            }
+            if (!_pedidoService.UpdatePedido(pedido, dto.ItensIds))
+                return StatusCode(500, "Erro ao atualizar");
 
             return NoContent();
         }
 
-        
         [HttpDelete("{pedidoId}")]
-        [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         public IActionResult DeletePedido(int pedidoId)
@@ -123,16 +95,8 @@ namespace TransportadorasApi.Controllers
             if (!_pedidoService.PedidoExists(pedidoId))
                 return NotFound();
 
-            var pedidoToDelete = _pedidoService.GetPedido(pedidoId);
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             if (!_pedidoService.DeletePedido(pedidoId))
-            {
-                ModelState.AddModelError("", "Algo deu errado ao deletar o pedido");
-                return StatusCode(500, ModelState);
-            }
+                return StatusCode(500, "Erro ao remover");
 
             return NoContent();
         }

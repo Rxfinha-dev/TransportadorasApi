@@ -28,7 +28,9 @@ namespace TransportadorasApi.Services
                 e.Bairro == deposito.Localizacao.Bairro &&
                 e.Cidade == deposito.Localizacao.Cidade &&
                 e.cep == deposito.Localizacao.cep &&
-                e.Numero == deposito.Localizacao.Numero
+                e.Numero == deposito.Localizacao.Numero &&
+                e.Estado == deposito.Localizacao.Estado
+                
             );
 
             if (enderecoExistente == null)
@@ -94,7 +96,8 @@ namespace TransportadorasApi.Services
                 e.Bairro == depositoToUpdate.Localizacao.Bairro &&
                 e.Cidade == depositoToUpdate.Localizacao.Cidade &&
                 e.cep == depositoToUpdate.Localizacao.cep &&
-                e.Numero == depositoToUpdate.Localizacao.Numero
+                e.Numero == depositoToUpdate.Localizacao.Numero &&
+                e.Estado == depositoToUpdate.Localizacao.Estado
             );
 
             if (enderecoExistente == null)

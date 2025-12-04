@@ -2,81 +2,75 @@
 using TransportadorasApi.Interfaces.IService;
 using TransportadorasApi.Model;
 
-namespace TransportadorasApi.Services
+namespace TransportadorasApi.Service
 {
     public class PedidoService : IPedidoService
     {
         private readonly IPedidoRepository _pedidoRepository;
         private readonly IItemRepository _itemRepository;
-        private readonly IClienteRepository _clienteRepository;
-        private readonly IRotaRepository _rotaRepository;
-        private readonly IEnderecoRepository _enderecoRepository;
 
-        public PedidoService(IPedidoRepository pedidoRepository, IItemRepository itemRepository, IClienteRepository clienteRepository, IRotaRepository rotaRepository, IEnderecoRepository enderecoRepository)
+        public PedidoService(IPedidoRepository pedidoRepository, IItemRepository itemRepository)
         {
             _pedidoRepository = pedidoRepository;
             _itemRepository = itemRepository;
-            _clienteRepository = clienteRepository;
-            _rotaRepository = rotaRepository;
-            _enderecoRepository = enderecoRepository;
         }
 
-        public ICollection<Pedido> GetPedidos() =>
-            _pedidoRepository.GetPedidos();
-
-        public Pedido GetPedido(int id) =>
-            _pedidoRepository.GetPedido(id);
-
-        public ICollection<Item> GetItensByPedido(int pedidoId) =>
-            _pedidoRepository.GetItensByPedido(pedidoId);
-
-        public bool PedidoExists(int id) =>
-            _pedidoRepository.PedidoExists(id);
-
-
-    
-        public bool CreatePedido(int enderecoOrigemId, int enderecoDestinoId, int clienteId, int rotaId, List<int> itensIds)
+        public ICollection<Pedido> GetPedidos()
         {
-            if (!_clienteRepository.ClienteExists(clienteId) ||
-                !_rotaRepository.RotaExists(rotaId) ||
-                !_enderecoRepository.EnderecoExists(enderecoOrigemId) ||
-                !_enderecoRepository.EnderecoExists(enderecoDestinoId))
-                return false;
+            return _pedidoRepository.GetPedidos();
+        }
 
-            var pedido = new Pedido
+        public Pedido GetPedido(int id)
+        {
+            return _pedidoRepository.GetPedido(id);
+        }
+
+        public ICollection<Item> GetItensByPedido(int pedidoId)
+        {
+            return _pedidoRepository.GetItensByPedido(pedidoId);
+        }
+
+        public bool PedidoExists(int id)
+        {
+            return _pedidoRepository.PedidoExists(id);
+        }
+
+        public bool CreatePedido(Pedido pedido, List<int> itensIds)
+        {
+            pedido.PedidoItems = itensIds.Select(itemId => new PedidoItem
             {
-                EnderecoOrigemId = enderecoOrigemId,
-                EnderecoDestinoId = enderecoDestinoId,
-                Cliente = _clienteRepository.GetCliente(clienteId),
-                Rota = _rotaRepository.GetRota(rotaId),
-                PedidoItems = itensIds.Select(id => new PedidoItem 
-                {
-                    ItemId = id,
-                    PedidoId = 0
-                }).ToList()
-            };
+                ItemId = itemId,
+                Pedido = pedido
+            }).ToList();
 
             return _pedidoRepository.CreatePedido(pedido);
         }
 
-
-        
-        public bool UpdatePedido(Pedido pedido, List<int> novosItensIds)
+        public bool UpdatePedido(Pedido pedido, List<int> itensIds)
         {
-            if (!_pedidoRepository.PedidoExists(pedido.Id))
+            var pedidoDb = _pedidoRepository.GetPedido(pedido.Id);
+
+            if (pedidoDb == null)
                 return false;
 
-            
-            pedido.PedidoItems = novosItensIds.Select(i => new PedidoItem
+            pedidoDb.EnderecoOrigemId = pedido.EnderecoOrigemId;
+            pedidoDb.EnderecoDestinoId = pedido.EnderecoDestinoId;
+            pedidoDb.ValorTotal = pedido.ValorTotal;
+
+            pedidoDb.ClienteId = pedido.ClienteId;
+            pedidoDb.RotaId = pedido.RotaId;
+
+            pedidoDb.PedidoItems.Clear();
+
+            pedidoDb.PedidoItems = itensIds.Select(itemId => new PedidoItem
             {
-                ItemId = i,
-                PedidoId = pedido.Id
+                PedidoId = pedido.Id,
+                ItemId = itemId
             }).ToList();
 
-            return _pedidoRepository.UpdatePedido(pedido);
+            return _pedidoRepository.UpdatePedido(pedidoDb);
         }
 
-        
         public bool DeletePedido(int id)
         {
             var pedido = _pedidoRepository.GetPedido(id);

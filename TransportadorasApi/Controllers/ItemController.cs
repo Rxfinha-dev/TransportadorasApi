@@ -45,6 +45,21 @@ namespace TransportadorasApi.Controllers
 
             return Ok(item);
         }
+        [HttpGet("pedidos/{itemId}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Pedido>))]
+        [ProducesResponseType(400)]
+        public IActionResult GetPedidosByItem(int itemId)
+        {
+            if (!_itemService.ItemExists(itemId))
+                return NotFound();
+
+            var pedidos = _mapper.Map<List<PedidoDto>>(_itemService.GetPedidosByItem(itemId));
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(pedidos);
+        }
 
         [HttpPost]
         [ProducesResponseType(200)]

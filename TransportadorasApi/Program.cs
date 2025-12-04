@@ -4,6 +4,7 @@ using TransportadorasApi.Data;
 using TransportadorasApi.Interfaces.IRepository;
 using TransportadorasApi.Interfaces.IService;
 using TransportadorasApi.Repository;
+using TransportadorasApi.Service;
 using TransportadorasApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -61,7 +61,8 @@ namespace TransportadorasApi.Repository
 
         public bool Save()
         {
-            return _context.SaveChanges() > 0;
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
         }
     }
 }
