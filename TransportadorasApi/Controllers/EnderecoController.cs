@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using TransportadorasApi.Dto;
 using TransportadorasApi.Interfaces.IRepository;
+using TransportadorasApi.Interfaces.IService;
 using TransportadorasApi.Model;
 using TransportadorasApi.Repository;
 
@@ -11,11 +13,11 @@ namespace TransportadorasApi.Controllers
     [ApiController]
     public class EnderecoController : Controller
     {
-        private readonly IEnderecoRepository _enderecoRepository;
+        private readonly IEnderecoService _enderecoService;
         private readonly IMapper _mapper;
-        public EnderecoController(IEnderecoRepository enderecoRepository, IMapper mapper)
+        public EnderecoController(IEnderecoService enderecoRepository, IMapper mapper)
         {
-            _enderecoRepository = enderecoRepository;
+            _enderecoService = enderecoRepository;
             _mapper = mapper;
         }
 
@@ -23,7 +25,7 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Endereco>))]
         public IActionResult GetEnderecos()
         {
-            var enderecos = _enderecoRepository.GetEnderecos();
+            var enderecos = _mapper.Map<List<EnderecoDto>>(_enderecoService.GetEnderecos());
 
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -35,10 +37,10 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetRoda(int enderecoId)
         {
-            if (!_enderecoRepository.EnderecoExists(enderecoId))
+            if (!_enderecoService.EnderecoExists(enderecoId))
                 return NotFound();
 
-            var rota = _enderecoRepository.GetEndereco(enderecoId);
+            var rota = _mapper.Map<EnderecoDto>(_enderecoService.GetEndereco(enderecoId));
 
             if(!ModelState.IsValid)
                return NotFound();
@@ -49,12 +51,12 @@ namespace TransportadorasApi.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreateEndereco([FromBody]Endereco enderecoCreate)
+        public IActionResult CreateEndereco([FromBody]EnderecoDto enderecoCreate)
         {
             if(enderecoCreate == null)
                 return BadRequest(ModelState);
 
-            var endereco = _enderecoRepository.GetEnderecos()
+            var endereco = _enderecoService.GetEnderecos()
                 .Where(e => e.cep.Trim().ToUpper() == enderecoCreate.cep.TrimEnd().ToUpper() && e.Numero.Trim().ToUpper()==enderecoCreate.Numero.TrimEnd().ToUpper())
                 .FirstOrDefault();
 
@@ -69,7 +71,7 @@ namespace TransportadorasApi.Controllers
 
             var enderecoMap = _mapper.Map<Endereco>(enderecoCreate);
 
-            if (!_enderecoRepository.CreateEndereco(enderecoMap))
+            if (!_enderecoService.CreateEndereco(enderecoMap))
             {
                 ModelState.AddModelError("", "Alguma coisa deu errado ao salvar");
                 return StatusCode(500, ModelState);
@@ -82,7 +84,7 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateEndereco(int enderecoId, [FromBody] Endereco updatedEndereco)
+        public IActionResult UpdateEndereco(int enderecoId, [FromBody] EnderecoDto updatedEndereco)
         {
             if ( updatedEndereco== null)
                 return BadRequest(ModelState);
@@ -90,7 +92,7 @@ namespace TransportadorasApi.Controllers
             if (enderecoId != updatedEndereco.Id)
                 return BadRequest(ModelState);
 
-            if (!_enderecoRepository.EnderecoExists(enderecoId))
+            if (!_enderecoService.EnderecoExists(enderecoId))
                 return NotFound();
 
             if (!ModelState.IsValid)
@@ -98,7 +100,7 @@ namespace TransportadorasApi.Controllers
 
             var enderecoMap = _mapper.Map<Endereco>(updatedEndereco);
 
-            if (!_enderecoRepository.UpdateEndereco(enderecoMap))
+            if (!_enderecoService.UpdateEndereco(enderecoMap))
             {
                 ModelState.AddModelError("", "Algo deu errado ao atualizar o endereço");
                 return StatusCode(500, ModelState);
@@ -113,15 +115,15 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(404)]
         public IActionResult DeleteEndereco(int enderecoId)
         {
-            if (!_enderecoRepository.EnderecoExists(enderecoId))
+            if (!_enderecoService.EnderecoExists(enderecoId))
                 return NotFound();
 
-            var enderecoToDelete = _enderecoRepository.GetEndereco(enderecoId);
+            var enderecoToDelete = _enderecoService.GetEndereco(enderecoId);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (!_enderecoRepository.DeleteEndereco(enderecoToDelete))
+            if (!_enderecoService.DeleteEndereco(enderecoToDelete))
             {
                 ModelState.AddModelError("", "Algo deu errado ao deletar");
             }
