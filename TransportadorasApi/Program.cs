@@ -17,6 +17,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IRotaRepository, RotaRepository>();
 builder.Services.AddScoped<IEnderecoRepository, EnderecoRepository>();
 builder.Services.AddScoped<IDepositoRepository, DepositoRepository>();
+builder.Services.AddScoped<IDepositoService, DepositoService>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IItemRepository, ItemRepository>();

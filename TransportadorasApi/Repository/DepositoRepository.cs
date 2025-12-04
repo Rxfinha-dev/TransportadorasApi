@@ -15,31 +15,8 @@ namespace TransportadorasApi.Repository
 
         public bool CreateDeposito(Deposito deposito)
         {
-            var enderecoExistente = _context.Enderecos
-            .FirstOrDefault(e =>
-                e.Rua == deposito.Localizacao.Rua &&
-                e.Bairro == deposito.Localizacao.Bairro &&
-                e.Cidade == deposito.Localizacao.Cidade &&
-                e.cep == deposito.Localizacao.cep &&
-                e.Numero == deposito.Localizacao.Numero
-            );
-
-            if (enderecoExistente == null)
-            {
-                _context.Add(deposito);
-            }
-            else
-            {
-                int enderecoId = enderecoExistente.Id;
-
-
-                deposito = new Deposito
-                {
-                    Localizacao = enderecoExistente
-                };
-
-                _context.Add(deposito);
-            }
+           
+            _context.Add(deposito);
             return Save();
         }
 
@@ -87,28 +64,8 @@ namespace TransportadorasApi.Repository
 
         public bool UpdateDeposito(Deposito deposito)
         {
-            var enderecoExistente = _context.Enderecos
-                        .FirstOrDefault(e =>
-                            e.Rua == deposito.Localizacao.Rua &&
-                            e.Bairro == deposito.Localizacao.Bairro &&
-                            e.Cidade == deposito.Localizacao.Cidade &&
-                            e.cep == deposito.Localizacao.cep &&
-                            e.Numero == deposito.Localizacao.Numero
-                        );
-
-            if (enderecoExistente == null)
-            {
-                return false;
-            }
-            else
-            {
-                int enderecoId = enderecoExistente.Id;
-
-
-                deposito.Localizacao = enderecoExistente;
-
-                _context.Update(deposito);
-            }
+           
+            _context.Update(deposito);
             return Save();
 
 

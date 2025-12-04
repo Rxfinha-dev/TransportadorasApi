@@ -1,4 +1,5 @@
-﻿using TransportadorasApi.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using TransportadorasApi.Data;
 using TransportadorasApi.Interfaces.IRepository;
 using TransportadorasApi.Model;
 
@@ -32,12 +33,20 @@ namespace TransportadorasApi.Repository
 
         public Pedido GetPedido(int id)
         {
-            return _context.Pedidos.Where(p => p.Id == id).FirstOrDefault();
+                return _context.Pedidos.Include(p => p.Cliente)
+                                .Include(p => p.Rota)
+                                .Include(p => p.PedidoItems)
+                                .ThenInclude(pi => pi.Item)
+                                .FirstOrDefault(p => p.Id == id);
         }
 
         public ICollection<Pedido> GetPedidos()
         {
-            return _context.Pedidos.OrderBy(p => p.Id).ToList();
+            return _context.Pedidos.Include(p => p.Cliente)
+                                .Include(p => p.Rota)
+                                .Include(p => p.PedidoItems)
+                                .ThenInclude(pi => pi.Item)
+                                .ToList();
         }
 
         public bool PedidoExists(int id)

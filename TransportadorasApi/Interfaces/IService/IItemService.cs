@@ -5,12 +5,12 @@ namespace TransportadorasApi.Interfaces.IService
 {
     public interface IItemService
     {
-        IEnumerable<Item> GetItens();
+        ICollection<Item> GetItens();
         Item GetItem(int id);
+        ICollection<Pedido> GetPedidosByItem(int itemId);
         bool ItemExists(int id);
-
-        bool CreateItem(ItemDto dto);
-        bool UpdateItem(int id, ItemDto dto);
-        bool DeleteItem(int id);
+        bool CreateItem(Item item);
+        bool UpdateItem(Item item);
+        bool DeleteItem(Item item);
     }
 }

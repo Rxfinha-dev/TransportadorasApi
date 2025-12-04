@@ -49,7 +49,7 @@ namespace TransportadorasApi.Services
                 EnderecoDestinoId = enderecoDestinoId,
                 Cliente = _clienteRepository.GetCliente(clienteId),
                 Rota = _rotaRepository.GetRota(rotaId),
-                PedidoItems = itensIds.Select(id => new PedidoItem
+                PedidoItems = itensIds.Select(id => new PedidoItem 
                 {
                     ItemId = id,
                     PedidoId = 0

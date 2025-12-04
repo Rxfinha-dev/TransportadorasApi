@@ -11,8 +11,8 @@ using TransportadorasApi.Data;
 namespace TransportadorasApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20251202163409_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251204184419_InitalCreate")]
+    partial class InitalCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -120,6 +120,9 @@ namespace TransportadorasApi.Migrations
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Valor")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

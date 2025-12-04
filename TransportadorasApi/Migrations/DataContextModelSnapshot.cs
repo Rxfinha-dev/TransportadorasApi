@@ -118,6 +118,9 @@ namespace TransportadorasApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double>("Valor")
+                        .HasColumnType("float");
+
                     b.HasKey("Id");
 
                     b.ToTable("Itens");

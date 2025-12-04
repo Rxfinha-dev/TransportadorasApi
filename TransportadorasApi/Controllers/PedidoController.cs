@@ -25,7 +25,8 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Pedido>))]
         public IActionResult GetPedidos()
         {
-            var pedidos = _pedidoService.GetPedidos();
+            var pedidos = _mapper.Map<List<PedidoDto>>(_pedidoService.GetPedidos());
+           
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -42,7 +43,7 @@ namespace TransportadorasApi.Controllers
             if (!_pedidoService.PedidoExists(pedidoId))
                 return NotFound();
 
-            var pedido = _pedidoService.GetPedido(pedidoId);
+            var pedido = _mapper.Map<PedidoDto>(_pedidoService.GetPedido(pedidoId));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -54,7 +55,7 @@ namespace TransportadorasApi.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreatePedido([FromBody] PedidoCreateDto pedidoCreate)
+        public IActionResult CreatePedido([FromBody] PedidoDto pedidoCreate)
         {
             if (pedidoCreate == null)
                 return BadRequest(ModelState);
@@ -84,7 +85,7 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdatePedido(int pedidoId, [FromBody] PedidoUpdateDto updatedPedido)
+        public IActionResult UpdatePedido(int pedidoId, [FromBody] PedidoDto updatedPedido)
         {
             if (updatedPedido == null)
                 return BadRequest(ModelState);

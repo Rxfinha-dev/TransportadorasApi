@@ -11,11 +11,12 @@ namespace TransportadorasApi.Helper
             CreateMap<ItemDto, Item>();
             CreateMap<Item, ItemDto>();
 
-            CreateMap<PedidoCreateDto, Pedido>()
-                .ForMember(dest => dest.PedidoItems, opt => opt.Ignore());
+            CreateMap<PedidoDto, Pedido>();
+            CreateMap<Pedido, PedidoDto>().ForMember(dest => dest.ItensIds,
+                   opt => opt.MapFrom(src => src.PedidoItems.Select(pi => pi.ItemId)));
 
-            CreateMap<PedidoUpdateDto, Pedido>()
-                .ForMember(dest => dest.PedidoItems, opt => opt.Ignore());
+
+
         }
     }
     

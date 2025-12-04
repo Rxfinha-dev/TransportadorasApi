@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.Metrics;
-using TransportadorasApi.Interfaces.IRepository;
+using TransportadorasApi.Interfaces.IService;
 using TransportadorasApi.Model;
 
 namespace TransportadorasApi.Controllers
@@ -10,11 +10,11 @@ namespace TransportadorasApi.Controllers
     [ApiController]
     public class DepositoController : Controller
     {
-        private readonly IDepositoRepository _depositoRepository;
+        private readonly IDepositoService _depositoService;
         private readonly IMapper _mapper;
-        public DepositoController(IDepositoRepository depositoRepository, IMapper mapper) 
+        public DepositoController(IDepositoService depositoRepository, IMapper mapper) 
         {
-            _depositoRepository = depositoRepository;
+            _depositoService = depositoRepository;
             _mapper = mapper;
         }
 
@@ -22,7 +22,7 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Deposito>))]
         public IActionResult GetDepositos()
         {
-            var depositos = _depositoRepository.GetDepositos();
+            var depositos = _depositoService.GetDepositos();
 
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -35,10 +35,10 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetDeposito(int depositoId)
         {
-            if (!_depositoRepository.DepositoExists(depositoId))
+            if (!_depositoService.DepositoExists(depositoId))
                 return NotFound();
 
-            var deposito = _depositoRepository.GetDeposito(depositoId);
+            var deposito = _depositoService.GetDeposito(depositoId);
 
             if(!ModelState.IsValid) 
                 return BadRequest(ModelState);
@@ -50,7 +50,7 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetDepositoByEndereco(int enderecoId)
         {
-            var deposito = _depositoRepository.GetDepositoByEndereco(enderecoId);
+            var deposito = _depositoService.GetDepositoByEndereco(enderecoId);
 
 
 
@@ -66,10 +66,10 @@ namespace TransportadorasApi.Controllers
 
         public IActionResult GetDepositoEndereco(int depositoId)
         {
-            if (!_depositoRepository.DepositoExists(depositoId))
+            if (!_depositoService.DepositoExists(depositoId))
                 return NotFound();
 
-            var endereco = _depositoRepository.getDepositoEndereco(depositoId);
+            var endereco = _depositoService.GetDepositoEndereco(depositoId);
 
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -88,7 +88,7 @@ namespace TransportadorasApi.Controllers
             if (depositoCreate == null)
                 return BadRequest(ModelState);
 
-            var deposito = _depositoRepository.GetDepositos()
+            var deposito = _depositoService.GetDepositos()
                 .Where(d=>d.Localizacao == depositoCreate.Localizacao).FirstOrDefault();
 
             if(deposito != null)
@@ -102,7 +102,7 @@ namespace TransportadorasApi.Controllers
 
             var depositoMap = _mapper.Map<Deposito>(depositoCreate);
 
-            if (!_depositoRepository.CreateDeposito(depositoMap)) 
+            if (!_depositoService.CreateDeposito(depositoMap)) 
             {
                 ModelState.AddModelError("", "Algo deu errado ao criar o depósito");
                 return StatusCode(500, ModelState);
@@ -123,7 +123,7 @@ namespace TransportadorasApi.Controllers
             if (depositoId != updatedDeposito.Id)
                 return BadRequest(ModelState);
 
-            if (!_depositoRepository.DepositoExists(depositoId))
+            if (!_depositoService.DepositoExists(depositoId))
                 return NotFound();
 
             if (!ModelState.IsValid)
@@ -131,7 +131,7 @@ namespace TransportadorasApi.Controllers
 
             var depositoMap = _mapper.Map<Deposito>(updatedDeposito);
 
-            if (!_depositoRepository.UpdateDeposito(depositoMap))
+            if (!_depositoService.UpdateDeposito(depositoId, depositoMap))
             {
                 ModelState.AddModelError("", "Algo deu errado ao Atualizar o depósito");
                 return StatusCode(500, ModelState);
@@ -148,17 +148,17 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(404)]
         public IActionResult DeleteDeposito(int depositoId)
         {
-            if (!_depositoRepository.DepositoExists(depositoId))
+            if (!_depositoService.DepositoExists(depositoId))
             {
                 return NotFound();
             }
 
-            var depositoToDelete = _depositoRepository.GetDeposito(depositoId);
+            var depositoToDelete = _depositoService.GetDeposito(depositoId);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (!_depositoRepository.DeleteDeposito(depositoToDelete))
+            if (!_depositoService.DeleteDeposito(depositoToDelete))
             {
                 ModelState.AddModelError("", "Algo deu errado ao deletar o depósito");
             }

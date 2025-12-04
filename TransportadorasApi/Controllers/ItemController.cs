@@ -20,10 +20,10 @@ namespace TransportadorasApi.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Item>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ItemDto>))]
         public IActionResult GetItens()
         {
-            var itens = _itemService.GetItens();
+            var itens = _mapper.Map<List<ItemDto>>(_itemService.GetItens());
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -32,48 +32,67 @@ namespace TransportadorasApi.Controllers
         }
 
         [HttpGet("{itemId}")]
-        [ProducesResponseType(200, Type = typeof(Item))]
-        [ProducesResponseType(404)]
-        public IActionResult GetItem(int id)
+        [ProducesResponseType(200, Type = typeof(ItemDto))]
+        public IActionResult GetItem(int itemId)
         {
-            if (!_itemService.ItemExists(id))
+            if (!_itemService.ItemExists(itemId))
                 return NotFound();
 
-            var item = _itemService.GetItem(id);
+            var item = _mapper.Map<ItemDto>(_itemService.GetItem(itemId));
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             return Ok(item);
         }
 
         [HttpPost]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public IActionResult CreateItem([FromBody] ItemDto dto)
+        public IActionResult CreateItem([FromBody] ItemDto itemCreate)
         {
-            if (dto == null)
+            if (itemCreate == null)
                 return BadRequest(ModelState);
 
-            var item = _mapper.Map<Item>(dto);
+            var exists = _itemService.GetItens()
+                            .Any(i => i.Nome.Trim().ToUpper() == itemCreate.Nome.Trim().ToUpper());
 
-            if (!_itemService.CreateItem(dto))
+            if (exists)
             {
-                ModelState.AddModelError("", "Erro ao criar item");
+                ModelState.AddModelError("", "Item já cadastrado");
+                return StatusCode(422, ModelState);
+            }
+
+            var itemMap = _mapper.Map<Item>(itemCreate);
+
+            if (!_itemService.CreateItem(itemMap))
+            {
+                ModelState.AddModelError("", "Algo deu errado ao criar o item.");
                 return StatusCode(500, ModelState);
             }
 
-            return Ok("Item criado com sucesso!");
+            return Ok("Criado com sucesso.");
         }
 
         [HttpPut("{itemId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateItem(int id, [FromBody] ItemDto dto)
+        public IActionResult UpdateItem(int itemId, [FromBody] ItemDto updatedItem)
         {
-            if (!_itemService.ItemExists(id))
+            if (updatedItem == null)
+                return BadRequest(ModelState);
+
+            if (itemId != updatedItem.Id)
+                return BadRequest(ModelState);
+
+            if (!_itemService.ItemExists(itemId))
                 return NotFound();
 
-            if (!_itemService.UpdateItem(id, dto))
+            var itemMap = _mapper.Map<Item>(updatedItem);
+
+            if (!_itemService.UpdateItem(itemMap))
             {
-                ModelState.AddModelError("", "Erro ao atualizar item");
+                ModelState.AddModelError("", "Algo deu errado ao atualizar o item.");
                 return StatusCode(500, ModelState);
             }
 
@@ -83,14 +102,16 @@ namespace TransportadorasApi.Controllers
         [HttpDelete("{itemId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult DeleteItem(int id)
+        public IActionResult DeleteItem(int itemId)
         {
-            if (!_itemService.ItemExists(id))
+            if (!_itemService.ItemExists(itemId))
                 return NotFound();
 
-            if (!_itemService.DeleteItem(id))
+            var itemToDelete = _itemService.GetItem(itemId);
+
+            if (!_itemService.DeleteItem(itemToDelete))
             {
-                ModelState.AddModelError("", "Erro ao deletar item");
+                ModelState.AddModelError("", "Algo deu errado ao deletar o item.");
                 return StatusCode(500, ModelState);
             }
 
