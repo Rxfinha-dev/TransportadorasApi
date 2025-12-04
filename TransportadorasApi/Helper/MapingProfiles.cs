@@ -9,6 +9,7 @@ namespace TransportadorasApi.Helper
         public MapingProfiles()
         {
             CreateMap<Item, ItemDto>();
+            CreateMap<ItemDto, Item>();
         }
     }
 }

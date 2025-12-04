@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
+using TransportadorasApi.Interfaces.IRepository;
 using TransportadorasApi.Interfaces.IService;
 using TransportadorasApi.Model;
 using TransportadorasApi.Repository;
@@ -7,10 +9,10 @@ namespace TransportadorasApi.Services
 {
     public class ItemService : IItemService
     {
-        private readonly ItemRepository _itemRepository;
-        public ItemService(ItemRepository itemRepository)
+        private readonly IItemRepository _itemRepository;
+        public ItemService(IItemRepository itemRepository)
         {
-            itemRepository = _itemRepository;
+            _itemRepository = itemRepository;
         }
         public bool CreateItem(Item item)
         {
@@ -23,6 +25,8 @@ namespace TransportadorasApi.Services
 
         public bool DeleteItem(Item item)
         {
+            if(!_itemRepository.ItemExists(item.Id))
+                return false;
             return _itemRepository.DeleteItem(item); 
         }
 
