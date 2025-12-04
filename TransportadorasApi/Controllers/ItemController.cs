@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata.Ecma335;
 using TransportadorasApi.Dto;
 using TransportadorasApi.Interfaces.IService;
 using TransportadorasApi.Model;
@@ -13,6 +12,7 @@ namespace TransportadorasApi.Controllers
     {
         private readonly IItemService _itemService;
         private readonly IMapper _mapper;
+
         public ItemController(IItemService itemService, IMapper mapper)
         {
             _itemService = itemService;
@@ -23,8 +23,9 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Item>))]
         public IActionResult GetItens()
         {
-            var itens = _mapper.Map<List<ItemDto>>(GetItens());
-            if(!ModelState.IsValid)
+            var itens = _itemService.GetItens();
+
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             return Ok(itens);
@@ -32,88 +33,47 @@ namespace TransportadorasApi.Controllers
 
         [HttpGet("{itemId}")]
         [ProducesResponseType(200, Type = typeof(Item))]
-
-        public IActionResult GetItem(int itemId)
+        [ProducesResponseType(404)]
+        public IActionResult GetItem(int id)
         {
-            if (!_itemService.ItemExists(itemId))
+            if (!_itemService.ItemExists(id))
                 return NotFound();
 
-            var item = _mapper.Map<ItemDto>(_itemService.GetItem(itemId));
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var item = _itemService.GetItem(id);
 
             return Ok(item);
-
-        }
-
-        [HttpGet("pedidos/{itemId}")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Pedido>))]
-        [ProducesResponseType(400)]
-        public IActionResult GetPedidosByItem(int itemId)
-        {
-            if (!_itemService.ItemExists(itemId))
-                return NotFound();
-
-            var pedidos = _mapper.Map<List<Pedido>>(_itemService.GetPedidosByItem(itemId));
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(pedidos);
         }
 
         [HttpPost]
-        [ProducesResponseType(204)]
+        [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-
-        public IActionResult CreateItem([FromBody] ItemDto itemCreate) 
+        public IActionResult CreateItem([FromBody] ItemDto dto)
         {
-            if (itemCreate == null)
+            if (dto == null)
                 return BadRequest(ModelState);
 
-            if(_itemService.ItemExists(itemCreate.Id))
+            var item = _mapper.Map<Item>(dto);
+
+            if (!_itemService.CreateItem(dto))
             {
-                ModelState.AddModelError("", "Item já cadastrado.");
-                return StatusCode(422, ModelState);
-            }
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var itemMap = _mapper.Map<Item>(itemCreate);
-
-            if(!_itemService.CreateItem(itemMap))
-            {
-                ModelState.AddModelError("", "Algo deu errado ao criar o item.");
+                ModelState.AddModelError("", "Erro ao criar item");
                 return StatusCode(500, ModelState);
-
             }
 
-            return Ok("Criado com sucesso.");            
+            return Ok("Item criado com sucesso!");
         }
 
         [HttpPut("{itemId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateItem(int itemId, [FromBody]ItemDto updatedItem)
+        public IActionResult UpdateItem(int id, [FromBody] ItemDto dto)
         {
-            if (updatedItem == null)
-                return BadRequest(ModelState);
-
-            if (itemId != updatedItem.Id)
-                return BadRequest(ModelState);
-
-            if (_itemService.ItemExists(itemId))
+            if (!_itemService.ItemExists(id))
                 return NotFound();
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
 
-            var itemMap = _mapper.Map<Item>(updatedItem);
-
-            if(!_itemService.UpdateItem(itemMap))
+            if (!_itemService.UpdateItem(id, dto))
             {
-                ModelState.AddModelError("","Algo deu errado ao atualizar o item.");
+                ModelState.AddModelError("", "Erro ao atualizar item");
                 return StatusCode(500, ModelState);
             }
 
@@ -121,28 +81,20 @@ namespace TransportadorasApi.Controllers
         }
 
         [HttpDelete("{itemId}")]
-        [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        
-        public IActionResult DeleteItem(int itemId)
+        public IActionResult DeleteItem(int id)
         {
-            if (!_itemService.ItemExists(itemId))
+            if (!_itemService.ItemExists(id))
                 return NotFound();
 
-            var ItemToDelete = _itemService.GetItem(itemId);
-
-            if (!ModelState.IsValid)
-                return BadRequest();
-
-            if (!_itemService.DeleteItem(ItemToDelete))
+            if (!_itemService.DeleteItem(id))
             {
-                ModelState.AddModelError("", "Algo deu errado ao deletar item");
+                ModelState.AddModelError("", "Erro ao deletar item");
+                return StatusCode(500, ModelState);
             }
 
             return NoContent();
         }
-
-
     }
 }
