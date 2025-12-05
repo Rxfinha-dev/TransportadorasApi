@@ -15,5 +15,9 @@ public class Pedido
     public int RotaId { get; set; }
     public Rota Rota { get; set; }
 
+    public int transportadoraId { get; set; }
+
+    public  Transportadora Transportadora { get; set; }
+
     public ICollection<PedidoItem> PedidoItems { get; set; }
 }

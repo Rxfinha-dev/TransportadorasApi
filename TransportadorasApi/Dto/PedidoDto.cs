@@ -11,6 +11,8 @@
         public int ClienteId { get; set; }
         public int RotaId { get; set; }
 
+        public int transportadoraId { get; set; }
+
         public List<int> ItensIds { get; set; }
     }
 }

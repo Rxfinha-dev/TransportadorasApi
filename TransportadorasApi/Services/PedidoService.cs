@@ -60,6 +60,8 @@ namespace TransportadorasApi.Service
             pedidoDb.ClienteId = pedido.ClienteId;
             pedidoDb.RotaId = pedido.RotaId;
 
+            pedidoDb.transportadoraId = pedido.transportadoraId;
+
             pedidoDb.PedidoItems.Clear();
 
             pedidoDb.PedidoItems = itensIds.Select(itemId => new PedidoItem

@@ -17,7 +17,7 @@ namespace TransportadorasApi.Data
         public DbSet<Pedido> Pedidos { get; set; }
         public DbSet<PedidoItem> PedidoItems { get; set; }
         public DbSet<Rota> Rotas { get; set; }
-
+        public DbSet<Transportadora> Transportadoras { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PedidoItem>()
