@@ -15,37 +15,47 @@ namespace TransportadorasApi.Services
         {
             _depositoRepository = depositoRepository;
             _context = context;
-            
         }
+
+
         public bool CreateDeposito(Deposito deposito)
         {
+         
             if (_depositoRepository.DepositoExists(deposito.Id))
                 return false;
 
-            var enderecoExistente = _context.Enderecos
-            .FirstOrDefault(e =>
-                e.Rua == deposito.Localizacao.Rua &&
-                e.Bairro == deposito.Localizacao.Bairro &&
-                e.Cidade == deposito.Localizacao.Cidade &&
-                e.cep == deposito.Localizacao.cep &&
-                e.Numero == deposito.Localizacao.Numero &&
-                e.Estado == deposito.Localizacao.Estado
+         
+            var endereco = _context.Enderecos
+                .FirstOrDefault(e =>
+                    e.Rua == deposito.Localizacao.Rua &&
+                    e.Bairro == deposito.Localizacao.Bairro &&
+                    e.Cidade == deposito.Localizacao.Cidade &&
+                    e.cep == deposito.Localizacao.cep &&
+                    e.Numero == deposito.Localizacao.Numero &&
+                    e.Estado == deposito.Localizacao.Estado
+                );
+
+
+            if (endereco != null)
+            {
+               
+                bool depositoVerifyer = _context.Depositos
+                    .Any(d => d.Localizacao.Id == endereco.Id);
+
+                if (depositoVerifyer)
+                {
+                    return false;
+                }
+
                 
-            );
-
-            if (enderecoExistente == null)
-            {
-                return _depositoRepository.CreateDeposito(deposito);
-            }
-            else
-            {
-                int enderecoId = enderecoExistente.Id;
-
-                deposito.Localizacao = enderecoExistente;
+                deposito.Localizacao = endereco;
 
                 return _depositoRepository.CreateDeposito(deposito);
             }
+
+            return _depositoRepository.CreateDeposito(deposito);
         }
+
 
         public bool DeleteDeposito(Deposito deposito)
         {
@@ -107,7 +117,7 @@ namespace TransportadorasApi.Services
 
 
            deposito.Localizacao = enderecoExistente;
-
+            deposito.Nome = depositoToUpdate.Nome;
            
 
             return _depositoRepository.UpdateDeposito(deposito);

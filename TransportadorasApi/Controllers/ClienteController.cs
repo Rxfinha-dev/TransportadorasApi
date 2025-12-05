@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using TransportadorasApi.Dto;
 using TransportadorasApi.Interfaces.IService;
 using TransportadorasApi.Model;
 
@@ -23,7 +24,7 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Cliente>))]
         public IActionResult GetClientes()
         {
-            var clientes = _clienteService.GetClientes();
+            var clientes = _mapper.Map<List<ClienteDto>>(_clienteService.GetClientes());
 
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -39,7 +40,7 @@ namespace TransportadorasApi.Controllers
             if(!_clienteService.ClienteExists(clienteId))
                 return NotFound();
 
-            var cliente = _clienteService.GetCliente(clienteId);
+            var cliente = _mapper.Map<ClienteDto>(_clienteService.GetCliente(clienteId));
 
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);  
@@ -55,9 +56,9 @@ namespace TransportadorasApi.Controllers
             if(!_clienteService.ClienteExistsByCpf(clienteCpf))
                 return NotFound();
 
-            var cliente = _clienteService.GetCliente(clienteCpf);
+            var cliente = _mapper.Map<ClienteDto>(_clienteService.GetCliente(clienteCpf));
 
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             return Ok(cliente);
         }
@@ -65,7 +66,7 @@ namespace TransportadorasApi.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreateCliente([FromBody]Cliente clienteCreate)
+        public IActionResult CreateCliente([FromBody]ClienteDto clienteCreate)
         {
             if (clienteCreate == null)
                 return BadRequest(ModelState);
@@ -96,7 +97,7 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateDeposito(int clienteId, [FromBody] Cliente updatedCliente)
+        public IActionResult UpdateDeposito(int clienteId, [FromBody] ClienteDto updatedCliente)
         {
             if (updatedCliente == null)
                 return BadRequest(ModelState);

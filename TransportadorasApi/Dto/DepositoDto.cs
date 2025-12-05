@@ -1,6 +1,8 @@
-﻿namespace TransportadorasApi.Model
+﻿using TransportadorasApi.Model;
+
+namespace TransportadorasApi.Dto
 {
-    public class Deposito
+    public class DepositoDto
     {
         public int Id { get; set; }
 

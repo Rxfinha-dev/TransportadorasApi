@@ -12,6 +12,12 @@ namespace TransportadorasApi.Helper
             CreateMap<Item, ItemDto>();
             CreateMap<EnderecoDto, Endereco>();
             CreateMap<Endereco, EnderecoDto>();
+            CreateMap<Rota, RotaDto>();
+            CreateMap<RotaDto, Rota>();
+            CreateMap<Deposito, DepositoDto>();
+            CreateMap<DepositoDto, Deposito>();
+            CreateMap<Cliente, ClienteDto>();
+            CreateMap<ClienteDto, Cliente>();
 
             CreateMap<Pedido, PedidoDto>()
                 .ForMember(dest => dest.ItensIds,

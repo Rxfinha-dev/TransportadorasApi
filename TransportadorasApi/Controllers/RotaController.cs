@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel;
+using TransportadorasApi.Dto;
 using TransportadorasApi.Interfaces.IRepository;
+using TransportadorasApi.Interfaces.IService;
 using TransportadorasApi.Model;
 
 namespace TransportadorasApi.Controllers
@@ -10,11 +12,11 @@ namespace TransportadorasApi.Controllers
     [ApiController]
     public class RotaController : Controller
     {
-        private readonly IRotaRepository _rotaRepository;
+        private readonly IRotaService _rotaService;
         private readonly IMapper _mapper;
-        public RotaController(IRotaRepository rotaRepository, IMapper mapper)
+        public RotaController(IRotaService rotaService, IMapper mapper)
         {
-             _rotaRepository = rotaRepository;
+             _rotaService = rotaService;
             _mapper = mapper;
         }
 
@@ -22,7 +24,7 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Rota>))]
         public IActionResult GetRotas()
         {
-            var rotas = _rotaRepository.GetRotas();
+            var rotas = _mapper.Map<List<RotaDto>>(_rotaService.GetRotas());
 
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -35,12 +37,12 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetRota(int rotaId)
         {
-            if (!_rotaRepository.RotaExists(rotaId))
+            if (!_rotaService.RotaExists(rotaId))
                 return NotFound();
 
-            var rota = _rotaRepository.GetRota(rotaId);
+            var rota = _mapper.Map<RotaDto>(_rotaService.GetRota(rotaId));
 
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest();
 
             return Ok(rota);
@@ -49,12 +51,12 @@ namespace TransportadorasApi.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreateRota([FromBody] Rota rotaCreate)
+        public IActionResult CreateRota([FromBody] RotaDto rotaCreate)
         {
             if (rotaCreate == null)
                 return BadRequest(ModelState);
 
-            var rota = _rotaRepository.GetRotas()
+            var rota = _rotaService.GetRotas()
                 .Where(r => r.Nome.Trim().ToUpper() == rotaCreate.Nome.TrimEnd().ToUpper())
                 .FirstOrDefault();
 
@@ -69,7 +71,7 @@ namespace TransportadorasApi.Controllers
 
             var rotaMap = _mapper.Map<Rota>(rotaCreate);
 
-            if(!_rotaRepository.CreateRota(rotaMap))
+            if(!_rotaService.CreateRota(rotaMap))
             {
                 ModelState.AddModelError("", "Alguma coisa deu errado ao salvar");
                 return StatusCode(500, ModelState);
@@ -83,7 +85,7 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateRota(int rotaId, [FromBody]Rota updatedRota)
+        public IActionResult UpdateRota(int rotaId, [FromBody]RotaDto updatedRota)
         {
             if (updatedRota == null)
                 return BadRequest(ModelState);
@@ -91,7 +93,7 @@ namespace TransportadorasApi.Controllers
             if (rotaId != updatedRota.Id)
                 return BadRequest(ModelState);
 
-            if (!_rotaRepository.RotaExists(rotaId))
+            if (!_rotaService.RotaExists(rotaId))
                 return NotFound();
 
             if (!ModelState.IsValid)
@@ -99,7 +101,7 @@ namespace TransportadorasApi.Controllers
 
             var rotaMap = _mapper.Map<Rota>(updatedRota);
 
-            if(!_rotaRepository.UpdateRota(rotaMap))
+            if(!_rotaService.UpdateRota(rotaMap))
             {
                 ModelState.AddModelError("", "Algo deu errado ao atualizar a rota");
                 return StatusCode(500, ModelState);
@@ -115,15 +117,15 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(404)]
         public IActionResult DeleteRota(int rotaId)
         {
-            if (!_rotaRepository.RotaExists(rotaId))
+            if (!_rotaService.RotaExists(rotaId))
                 return NotFound();
 
-            var rotaToDelete = _rotaRepository.GetRota(rotaId);
+            var rotaToDelete = _rotaService.GetRota(rotaId);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (!_rotaRepository.DeleteRota(rotaToDelete))
+            if (!_rotaService.DeleteRota(rotaToDelete))
             {
                 ModelState.AddModelError("", "Algo deu errado ao deletar");
             }

@@ -15,9 +15,9 @@ namespace TransportadorasApi.Controllers
     {
         private readonly IEnderecoService _enderecoService;
         private readonly IMapper _mapper;
-        public EnderecoController(IEnderecoService enderecoRepository, IMapper mapper)
+        public EnderecoController(IEnderecoService enderecoService, IMapper mapper)
         {
-            _enderecoService = enderecoRepository;
+            _enderecoService = enderecoService;
             _mapper = mapper;
         }
 

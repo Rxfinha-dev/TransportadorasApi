@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.Metrics;
+using TransportadorasApi.Dto;
 using TransportadorasApi.Interfaces.IService;
 using TransportadorasApi.Model;
 
@@ -22,7 +23,7 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Deposito>))]
         public IActionResult GetDepositos()
         {
-            var depositos = _depositoService.GetDepositos();
+            var depositos = _mapper.Map<List<DepositoDto>>(_depositoService.GetDepositos());
 
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -38,9 +39,9 @@ namespace TransportadorasApi.Controllers
             if (!_depositoService.DepositoExists(depositoId))
                 return NotFound();
 
-            var deposito = _depositoService.GetDeposito(depositoId);
+            var deposito = _mapper.Map<DepositoDto>(_depositoService.GetDeposito(depositoId));
 
-            if(!ModelState.IsValid) 
+            if (!ModelState.IsValid) 
                 return BadRequest(ModelState);
 
             return Ok(deposito);
@@ -50,7 +51,7 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetDepositoByEndereco(int enderecoId)
         {
-            var deposito = _depositoService.GetDepositoByEndereco(enderecoId);
+            var deposito = _mapper.Map<DepositoDto>(_depositoService.GetDepositoByEndereco(enderecoId));
 
 
 
@@ -83,7 +84,7 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
 
-        public IActionResult CreateDeposito([FromBody] Deposito depositoCreate)
+        public IActionResult CreateDeposito([FromBody] DepositoDto depositoCreate)
         {
             if (depositoCreate == null)
                 return BadRequest(ModelState);
@@ -115,7 +116,7 @@ namespace TransportadorasApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateDeposito(int depositoId, [FromBody] Deposito updatedDeposito)
+        public IActionResult UpdateDeposito(int depositoId, [FromBody] DepositoDto updatedDeposito)
         {
             if (updatedDeposito == null)
                 return BadRequest(ModelState);
